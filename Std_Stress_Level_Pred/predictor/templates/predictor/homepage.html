@@ -65,9 +65,29 @@
             color: white;
             border-radius: 12px;
             padding: 1.5rem;
-            height: auto%;
+            height: auto;
         }
-        
+        /* Add these styles to your CSS */
+        .low-stress { 
+            color: #28a745; 
+            font-weight: bold;
+        }
+        .medium-stress { 
+            color: #ffc107; 
+            font-weight: bold;
+        }
+        .high-stress { 
+            color: #dc3545; 
+            font-weight: bold;
+        }
+        .result-icon { 
+            transition: transform 0.3s ease; 
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .result-icon.low-stress { color: #28a745; }
+        .result-icon.medium-stress { color: #ffc107; }
+        .result-icon.high-stress { color: #dc3545; }
         .footer {
             background: var(--dark-color);
             color: white;
@@ -223,224 +243,222 @@
                             </li>
                         </ul>
                         
-                        <form id="predictionForm">
-                            <div class="tab-content" id="myTabContent">
-                                <!-- Mental Health Tab -->
-                                <div class="tab-pane fade show active" id="mental" role="tabpanel">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Anxiety Level (1-10)</label>
-                                            <input type="range" class="form-range" min="1" max="10" id="anxiety_level">
-                                            <div class="range-value" id="anxiety_value">5</div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Self Esteem (1-10)</label>
-                                            <input type="range" class="form-range" min="1" max="10" id="self_esteem">
-                                            <div class="range-value" id="esteem_value">5</div>
-                                        </div>
+                        <form id="predictionForm" method="POST">
+                        {% csrf_token %}
+                        <div class="tab-content" id="myTabContent">
+                            <!-- Mental Health Tab -->
+                            <div class="tab-pane fade show active" id="mental" role="tabpanel">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Anxiety Level (1-20)</label>
+                                        <select class="form-select" id="anxiety_level" name="anxiety_level">
+                                            {% for value, label in form.anxiety_level.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Mental Health History</label>
-                                            <select class="form-select" id="mental_health_history">
-                                                <option value="none">No history</option>
-                                                <option value="mild">Mild issues</option>
-                                                <option value="moderate">Moderate issues</option>
-                                                <option value="severe">Severe issues</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Depression Level (1-10)</label>
-                                            <input type="range" class="form-range" min="1" max="10" id="depression">
-                                            <div class="range-value" id="depression_value">5</div>
-                                        </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Self Esteem (1-10)</label>
+                                        <select class="form-select" id="self_esteem" name="self_esteem">
+                                            {% for value, label in form.self_esteem.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                 </div>
                                 
-                                <!-- Physical Health Tab -->
-                                <div class="tab-pane fade" id="physical" role="tabpanel">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Headache Frequency</label>
-                                            <select class="form-select" id="headache">
-                                                <option value="never">Never</option>
-                                                <option value="rarely">Rarely</option>
-                                                <option value="sometimes">Sometimes</option>
-                                                <option value="often">Often</option>
-                                                <option value="always">Always</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Blood Pressure</label>
-                                            <select class="form-select" id="blood_pressure">
-                                                <option value="normal">Normal</option>
-                                                <option value="elevated">Elevated</option>
-                                                <option value="high">High</option>
-                                            </select>
-                                        </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Mental Health History</label>
+                                        <select class="form-select" id="mental_health_history" name="mental_health_history">
+                                            {% for value, label in form.mental_health_history.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Sleep Quality (1-10)</label>
-                                            <input type="range" class="form-range" min="1" max="10" id="sleep_quality">
-                                            <div class="range-value" id="sleep_value">5</div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Breathing Problems</label>
-                                            <select class="form-select" id="breathing_problem">
-                                                <option value="none">None</option>
-                                                <option value="mild">Mild</option>
-                                                <option value="moderate">Moderate</option>
-                                                <option value="severe">Severe</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Environment Tab -->
-                                <div class="tab-pane fade" id="environment" role="tabpanel">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Noise Level in Environment</label>
-                                            <select class="form-select" id="noise_level">
-                                                <option value="quiet">Quiet</option>
-                                                <option value="moderate">Moderate</option>
-                                                <option value="noisy">Noisy</option>
-                                                <option value="very-noisy">Very Noisy</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Living Conditions</label>
-                                            <select class="form-select" id="living_conditions">
-                                                <option value="excellent">Excellent</option>
-                                                <option value="good">Good</option>
-                                                <option value="fair">Fair</option>
-                                                <option value="poor">Poor</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Feeling of Safety</label>
-                                            <select class="form-select" id="safety">
-                                                <option value="very-safe">Very Safe</option>
-                                                <option value="safe">Safe</option>
-                                                <option value="neutral">Neutral</option>
-                                                <option value="unsafe">Unsafe</option>
-                                                <option value="very-unsafe">Very Unsafe</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Basic Needs Met</label>
-                                            <select class="form-select" id="basic_needs">
-                                                <option value="fully">Fully Met</option>
-                                                <option value="mostly">Mostly Met</option>
-                                                <option value="partially">Partially Met</option>
-                                                <option value="rarely">Rarely Met</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Bullying Experience</label>
-                                            <select class="form-select" id="bullying">
-                                                <option value="never">Never</option>
-                                                <option value="rarely">Rarely</option>
-                                                <option value="sometimes">Sometimes</option>
-                                                <option value="often">Often</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Academic Tab -->
-                                <div class="tab-pane fade" id="academic" role="tabpanel">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Academic Performance</label>
-                                            <select class="form-select" id="academic_performance">
-                                                <option value="excellent">Excellent</option>
-                                                <option value="good">Good</option>
-                                                <option value="average">Average</option>
-                                                <option value="below-average">Below Average</option>
-                                                <option value="poor">Poor</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Study Load (1-10)</label>
-                                            <input type="range" class="form-range" min="1" max="10" id="study_load">
-                                            <div class="range-value" id="study_value">5</div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Teacher-Student Relationship</label>
-                                            <select class="form-select" id="teacher_student_relationship">
-                                                <option value="excellent">Excellent</option>
-                                                <option value="good">Good</option>
-                                                <option value="neutral">Neutral</option>
-                                                <option value="poor">Poor</option>
-                                                <option value="very-poor">Very Poor</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Future Career Concerns</label>
-                                            <select class="form-select" id="future_career_concerns">
-                                                <option value="none">None</option>
-                                                <option value="mild">Mild</option>
-                                                <option value="moderate">Moderate</option>
-                                                <option value="severe">Severe</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Social Support</label>
-                                            <select class="form-select" id="social_support">
-                                                <option value="excellent">Excellent</option>
-                                                <option value="good">Good</option>
-                                                <option value="moderate">Moderate</option>
-                                                <option value="poor">Poor</option>
-                                                <option value="none">None</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Peer Pressure</label>
-                                            <select class="form-select" id="peer_pressure">
-                                                <option value="none">None</option>
-                                                <option value="mild">Mild</option>
-                                                <option value="moderate">Moderate</option>
-                                                <option value="high">High</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Extracurricular Activities</label>
-                                            <select class="form-select" id="extracurricular_activities">
-                                                <option value="none">None</option>
-                                                <option value="1-2">1-2 activities</option>
-                                                <option value="3-4">3-4 activities</option>
-                                                <option value="5+">5+ activities</option>
-                                            </select>
-                                        </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Depression Level (1-10)</label>
+                                        <select class="form-select" id="depression" name="depression">
+                                            {% for value, label in form.depression.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-predict btn-lg">
-                                    <i class="bi bi-calculator"></i> Predict Stress Level
-                                </button>
+                            <!-- Physical Health Tab -->
+                            <div class="tab-pane fade" id="physical" role="tabpanel">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Headache Frequency</label>
+                                        <select class="form-select" id="headache" name="headache">
+                                            {% for value, label in form.headache.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Blood Pressure</label>
+                                        <select class="form-select" id="blood_pressure" name="blood_pressure">
+                                            {% for value, label in form.blood_pressure.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Sleep Quality (1-10)</label>
+                                        <select class="form-select" id="sleep_quality" name="sleep_quality">
+                                            {% for value, label in form.sleep_quality.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Breathing Problems</label>
+                                        <select class="form-select" id="breathing_problem" name="breathing_problem">
+                                            {% for value, label in form.breathing_problem.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                        </form>
+                            
+                            <!-- Environment Tab -->
+                            <div class="tab-pane fade" id="environment" role="tabpanel">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Noise Level in Environment</label>
+                                        <select class="form-select" id="noise_level" name="noise_level">
+                                            {% for value, label in form.noise_level.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Living Conditions</label>
+                                        <select class="form-select" id="living_conditions" name="living_conditions">
+                                            {% for value, label in form.living_conditions.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Feeling of Safety</label>
+                                        <select class="form-select" id="safety" name="safety">
+                                            {% for value, label in form.safety.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Basic Needs Met</label>
+                                        <select class="form-select" id="basic_needs" name="basic_needs">
+                                            {% for value, label in form.basic_needs.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Bullying Experience</label>
+                                        <select class="form-select" id="bullying" name="bullying">
+                                            {% for value, label in form.bullying.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Academic Tab -->
+                            <div class="tab-pane fade" id="academic" role="tabpanel">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Academic Performance</label>
+                                        <select class="form-select" id="academic_performance" name="academic_performance">
+                                            {% for value, label in form.academic_performance.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Study Load (1-10)</label>
+                                        <select class="form-select" id="study_load" name="study_load">
+                                            {% for value, label in form.study_load.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Teacher-Student Relationship</label>
+                                        <select class="form-select" id="teacher_student_relationship" name="teacher_student_relationship">
+                                            {% for value, label in form.teacher_student_relationship.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Future Career Concerns</label>
+                                        <select class="form-select" id="future_career_concerns" name="future_career_concerns">
+                                            {% for value, label in form.future_career_concerns.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Social Support</label>
+                                        <select class="form-select" id="social_support" name="social_support">
+                                            {% for value, label in form.social_support.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Peer Pressure</label>
+                                        <select class="form-select" id="peer_pressure" name="peer_pressure">
+                                            {% for value, label in form.peer_pressure.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Extracurricular Activities</label>
+                                        <select class="form-select" id="extracurricular_activities" name="extracurricular_activities">
+                                            {% for value, label in form.extracurricular_activities.field.choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-predict btn-lg">
+                                <i class="bi bi-calculator"></i> Predict Stress Level
+                            </button>
+                        </div>
+                    </form>
+                     
                     </div>
                 </div>
                 
@@ -448,17 +466,14 @@
                 <div class="col-lg-4">
                     <!-- Result Card -->
                     <div class="result-container text-center">
-                        <h3 class="section-title"><i class="bi bi-clipboard-check"></i> Prediction Result</h3>
-                        <div class="result-icon medium-stress">
-                            <i class="bi bi-exclamation-triangle"></i>
+                        <h3 class="mb-4"><i class="bi bi-graph-up"></i> Prediction Result</h3>
+                        <div class="result-icon">
+                            <i class="bi bi-question-circle"></i>
                         </div>
-                        <h4 class="medium-stress">Medium Stress Level</h4>
-                        <p class="text-muted">Score: 6.2/10</p>
+                        <h4 class="">No prediction yet</h4>
+                        <p class="text-muted">Confidence: --%</p>  <!-- Changed from "Performance Index" to "Confidence" -->
                         <div class="progress mb-3" style="height: 20px;">
-                            <div class="progress-bar bg-warning" role="progressbar" style="width: 62%;" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100">62%</div>
-                        </div>
-                        <div class="mt-3">
-                            <p class="small">Recommendations: Consider stress management techniques and counseling services.</p>
+                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                         </div>
                     </div>
                     
@@ -467,7 +482,7 @@
                         <h4 class="mb-3"><i class="bi bi-speedometer2"></i> Model Performance</h4>
                         <div class="row text-center">
                             <div class="col-6 mb-3">
-                                <div class="metric-value">89.7%</div>
+                                <div class="metric-value">{{metrics.accuracy}}%</div>
                                 <div>Accuracy</div>
                             </div>
                             <div class="col-6 mb-3">
@@ -475,11 +490,11 @@
                                 <div>Precision</div>
                             </div>
                             <div class="col-6">
-                                <div class="metric-value">91.5%</div>
+                                <div class="metric-value">{{metrics.recall}}%</div>
                                 <div>Recall</div>
                             </div>
                             <div class="col-6">
-                                <div class="metric-value">89.3%</div>
+                                <div class="metric-value">{{metrics.f1}}%</div>
                                 <div>F1 Score</div>
                             </div>
                         </div>
@@ -497,59 +512,106 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Update range slider values
-        document.querySelectorAll('.form-range').forEach(slider => {
-            const valueDisplay = document.getElementById(slider.id + '_value');
-            slider.addEventListener('input', function() {
-                valueDisplay.textContent = this.value;
-            });
-        });
+  <script>
+// Update range slider values (keep your existing code)
+document.querySelectorAll('.form-range').forEach(slider => {
+    const valueDisplay = document.getElementById(slider.id + '_value');
+    slider.addEventListener('input', function() {
+        valueDisplay.textContent = this.value;
+    });
+});
 
-        // Form validation and interaction
-        document.getElementById('predictionForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // In a real application, you would send the form data to your Django backend
-            // and update the result section with the prediction
-            
-            // For demonstration purposes, we'll simulate different results
-            const resultIcon = document.querySelector('.result-icon');
-            const resultText = document.querySelector('h4');
-            const performanceValue = document.querySelector('.text-muted');
-            const progressBar = document.querySelector('.progress-bar');
-            
-            // Random result for demo
-            const stressLevel = Math.floor(Math.random() * 10) + 1;
-            const probability = Math.floor(Math.random() * 40) + 50;
-            
-            // Update performance text and progress bar
-            performanceValue.textContent = `Score: ${stressLevel}/10`;
-            progressBar.style.width = `${stressLevel * 10}%`;
-            progressBar.textContent = `${stressLevel}/10`;
-            progressBar.setAttribute('aria-valuenow', stressLevel);
-            
-            // Update result based on prediction
-            if (stressLevel <= 3) {
-                resultIcon.innerHTML = '<i class="bi bi-check-circle"></i>';
-                resultText.textContent = 'Low Stress Level';
-                resultText.className = 'low-stress';
-                resultIcon.className = 'result-icon low-stress';
-                progressBar.className = 'progress-bar bg-success';
-            } else if (stressLevel <= 7) {
-                resultIcon.innerHTML = '<i class="bi bi-exclamation-triangle"></i>';
-                resultText.textContent = 'Medium Stress Level';
-                resultText.className = 'medium-stress';
-                resultIcon.className = 'result-icon medium-stress';
-                progressBar.className = 'progress-bar bg-warning';
-            } else {
-                resultIcon.innerHTML = '<i class="bi bi-x-circle"></i>';
-                resultText.textContent = 'High Stress Level';
-                resultText.className = 'high-stress';
-                resultIcon.className = 'result-icon high-stress';
-                progressBar.className = 'progress-bar bg-danger';
-            }
-        });
-    </script>
+// Form submission handler with AJAX
+document.getElementById("predictionForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const submitButton = this.querySelector('button[type="submit"]');
+    
+    // Show loading state
+    submitButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Predicting...';
+    submitButton.disabled = true;
+
+    fetch("{% url 'homepage' %}", {  // Update with your actual URL name
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
+    .then(data => {
+        const stressLevel = data.prediction;  // 0, 1, or 2
+        const probability = data.probability; // 56.6%
+
+        const resultIcon = document.querySelector(".result-icon");
+        const resultText = document.querySelector(".result-container h4");
+        const performanceValue = document.querySelector(".result-container .text-muted");
+        const progressBar = document.querySelector(".progress-bar");
+
+        // Update confidence percentage and progress bar
+        performanceValue.textContent = `Confidence: ${probability.toFixed(1)}%`;
+        progressBar.style.width = `${probability}%`;
+        progressBar.textContent = `${probability.toFixed(1)}%`;
+        progressBar.setAttribute("aria-valuenow", probability);
+
+        // Update result based on stress level prediction
+        // Based on your response: 0 = Low, 1 = Medium, 2 = High
+        if (stressLevel === 0) {  // Low stress
+            resultIcon.innerHTML = '<i class="bi bi-emoji-smile"></i>';
+            resultText.textContent = 'Low Stress Level';
+            resultText.className = 'low-stress';
+            resultIcon.className = 'result-icon low-stress';
+            progressBar.className = 'progress-bar bg-success';
+        } else if (stressLevel === 1) {  // Medium stress
+            resultIcon.innerHTML = '<i class="bi bi-emoji-neutral"></i>';
+            resultText.textContent = 'Medium Stress Level';
+            resultText.className = 'medium-stress';
+            resultIcon.className = 'result-icon medium-stress';
+            progressBar.className = 'progress-bar bg-warning';
+        } else if (stressLevel === 2) {  // High stress
+            resultIcon.innerHTML = '<i class="bi bi-emoji-frown"></i>';
+            resultText.textContent = 'High Stress Level';
+            resultText.className = 'high-stress';
+            resultIcon.className = 'result-icon high-stress';
+            progressBar.className = 'progress-bar bg-danger';
+        } else {
+            // Fallback for unexpected values
+            resultIcon.innerHTML = '<i class="bi bi-question-circle"></i>';
+            resultText.textContent = 'Unknown Stress Level';
+            resultText.className = '';
+            resultIcon.className = 'result-icon';
+            progressBar.className = 'progress-bar bg-secondary';
+        }
+        
+        // Add some nice animation
+        resultIcon.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+            resultIcon.style.transform = 'scale(1)';
+        }, 300);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        // Show error message to user
+        const resultText = document.querySelector(".result-container h4");
+        resultText.textContent = 'Prediction Failed';
+        resultText.className = 'text-danger';
+        
+        alert("Error making prediction. Please check your inputs and try again.");
+    })
+    .finally(() => {
+        // Reset button state
+        submitButton.innerHTML = '<i class="bi bi-calculator"></i> Predict Stress Level';
+        submitButton.disabled = false;
+    });
+});
+
+</script>
 </body>
 </html>
