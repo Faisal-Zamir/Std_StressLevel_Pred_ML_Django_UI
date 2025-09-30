@@ -1,1 +1,1 @@
-web: gunicorn Std_Stress_Level_Pred.wsgi
+web: gunicorn Std_Stress_Level_Pred.wsgi:application --bind 0.0.0.0:$PORT
