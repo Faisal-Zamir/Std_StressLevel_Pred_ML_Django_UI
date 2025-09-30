@@ -1,0 +1,1 @@
+web: gunicorn Std_Stress_Level_Pred.wsgi
