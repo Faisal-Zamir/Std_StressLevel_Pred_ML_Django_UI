@@ -13,12 +13,12 @@ A machine learning project that predicts student stress levels and provides a us
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Faisal-Zamir/Student_Performance_ML_Project_DjangoUI.git
+git clone https://github.com/Faisal-Zamir/Std_StressLevel_Pred_ML_Django_UI.git
 ```
 2. Navigate to the project directory:
 
 ```bash
-cd Student_Performance_ML_Project_DjangoUI
+cd Std_StressLevel_Pred_ML_Django_UI
 ```
 3. Install required packages:
 ```bash
