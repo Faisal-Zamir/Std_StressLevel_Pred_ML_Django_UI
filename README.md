@@ -34,7 +34,7 @@ http://127.0.0.1:8000
 ```
 ## Usage
 
-To use the Student Performance Prediction application:
+To use the Student Stress Prediction application:
 
 - **Step 1:** Fill in student details in the input form.
 - **Step 2:** Click the **"Predict Stress Level"** button.
